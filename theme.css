@@ -1,0 +1,289 @@
+/* Bitstream Charter, bundled so every machine renders it (license: fonts/LICENSE.txt).
+   It loads from the extension package, so blocking costs nothing and avoids a flash
+   of the fallback font. */
+@font-face {
+  font-family: 'Tempo Charter';
+  font-weight: 400;
+  font-display: block;
+  src: url('fonts/charter-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Tempo Charter';
+  font-weight: 700;
+  font-display: block;
+  src: url('fonts/charter-bold.woff2') format('woff2');
+}
+
+:root {
+  --bg: #e2e2df;
+  --surface: #f8f8f6;
+  --soft: #ebebe8;
+  --soft-deep: #d4d4d0;
+  --accent: #5f5f5b;
+  --accent-hover: #4b4b48;
+  --accent-soft: #c2c2bd;
+  --ink: #222221;
+  --muted: #76766f;
+  --line: #d3d3cf;
+  --more: #b56a52;
+  --less: #6d8a62;
+  --radius: 10px;
+  --shadow: 0 1px 2px rgb(0 0 0 / 6%), 0 4px 14px rgb(0 0 0 / 7%);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --theme-fade: background-color 0.35s, border-color 0.35s, color 0.35s;
+
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+:root[data-theme='beige'] {
+  --bg: #faf7f2;
+  --surface: #ffffff;
+  --soft: #f2ece2;
+  --soft-deep: #e7dcca;
+  --accent: #a8875f;
+  --accent-hover: #967650;
+  --accent-soft: #dccbb1;
+  --ink: #2b2620;
+  --muted: #8f8577;
+  --line: #e8dfd1;
+  --shadow: 0 1px 2px rgb(70 50 25 / 6%), 0 4px 14px rgb(70 50 25 / 6%);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* Set on body, not :root: Chrome injects a stylesheet into extension pages that
+   gives body a system font at 75% size, which would override anything inherited. */
+body {
+  font: 14px/1.45 'Tempo Charter', Georgia, serif;
+  background: var(--bg);
+  transition: var(--theme-fade);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.label {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.num {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: var(--theme-fade);
+}
+
+[data-icons='off'] .favicon {
+  display: none;
+}
+
+.favicon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.more { color: var(--more); }
+.less { color: var(--less); }
+
+.chip {
+  display: inline-block;
+  padding: 3px 10px;
+  font-size: 12px;
+  background: var(--soft);
+  border-radius: 99px;
+  transition: var(--theme-fade);
+}
+
+.chip.more { background: rgb(181 106 82 / 10%); }
+.chip.less { background: rgb(109 138 98 / 12%); }
+
+/* Segmented control */
+
+.seg {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--n), 1fr);
+  padding: 3px;
+  background: var(--soft);
+  border-radius: 8px;
+  transition: var(--theme-fade);
+}
+
+.seg::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc((100% - 6px) / var(--n));
+  background: var(--surface);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
+  transform: translateX(calc(var(--i) * 100%));
+  transition: transform 0.4s var(--ease), background-color 0.35s;
+}
+
+.seg button {
+  position: relative;
+  padding: 6px 12px;
+  color: var(--muted);
+  font-size: 13px;
+  transition: color 0.25s;
+}
+
+.seg button.on {
+  color: var(--ink);
+}
+
+/* Bar chart */
+
+.chart {
+  --tick: 22px;
+  position: relative;
+  display: flex;
+  gap: 6px;
+  height: 200px;
+  padding-bottom: var(--tick);
+}
+
+.col {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.fill {
+  width: 100%;
+  max-width: 56px;
+  height: 100%;
+  margin: 0 auto;
+  background: var(--soft-deep);
+  border-radius: 6px 6px 3px 3px;
+  transform: scaleY(var(--h));
+  transform-origin: bottom;
+  transition: transform 0.6s var(--ease), background-color 0.25s;
+}
+
+.enter .fill {
+  animation: grow 0.8s var(--ease) backwards;
+  animation-delay: calc(var(--d) * 18ms);
+}
+
+.col.today .fill { background: var(--accent); }
+.col:hover .fill { background: var(--accent-soft); }
+.col.today:hover .fill { background: var(--accent-hover); }
+
+.tick {
+  position: absolute;
+  bottom: calc(4px - var(--tick));
+  left: 50%;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.col::after {
+  --tx: -50%;
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(var(--h) * 100% + 8px);
+  left: 50%;
+  z-index: 1;
+  padding: 5px 9px;
+  color: var(--surface);
+  font-size: 12px;
+  white-space: nowrap;
+  background: var(--ink);
+  border-radius: 7px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(var(--tx), 4px);
+  transition: opacity 0.2s, transform 0.25s var(--ease);
+}
+
+/* Keep edge tooltips inside narrow containers. */
+.col:first-child::after { --tx: 0%; left: 0; }
+.col.today::after { --tx: 0%; right: 0; left: auto; }
+
+.col:hover::after {
+  opacity: 1;
+  transform: translate(var(--tx), 0);
+}
+
+.avg-line {
+  position: absolute;
+  right: 0;
+  bottom: var(--tick);
+  left: 0;
+  height: calc(100% - var(--tick));
+  border-top: 1.5px dashed var(--accent);
+  pointer-events: none;
+  transform: translateY(calc((1 - var(--h)) * 100%));
+  transition: transform 0.8s var(--ease), opacity 0.3s;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.legend i {
+  width: 16px;
+  border-top: 1.5px dashed var(--accent);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
