@@ -1,0 +1,298 @@
+/* Clipping on <html> too stops body overflow propagating to the viewport,
+   so the off-screen settings view can't widen the popup. */
+html,
+body {
+  overflow: clip;
+}
+
+body {
+  position: relative;
+  width: 340px;
+  min-height: 300px;
+}
+
+.view {
+  display: grid;
+  gap: 10px;
+  padding: 18px 16px 16px;
+}
+
+/* Home always sets the popup's height and settings slides over it (scrolling if
+   it needs more room). Nothing changes size mid-transition, so the popup window
+   never resizes, and only transform/opacity animate, which stays on the GPU. */
+.home,
+.settings {
+  transition: transform 0.4s var(--ease), opacity 0.4s var(--ease);
+}
+
+.settings {
+  position: absolute;
+  inset: 0;
+  align-content: start;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  background: var(--bg);
+  box-shadow: -12px 0 24px rgb(0 0 0 / 6%);
+  /* Parked past the edge by the shadow's reach so it doesn't tint the home view. */
+  transform: translateX(calc(100% + 40px));
+}
+
+.show-settings .home {
+  opacity: 0.4;
+  transform: translateX(-30%);
+}
+
+.show-settings .settings {
+  transform: none;
+}
+
+[data-layout='compact'] .week {
+  display: none;
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 2px 4px 6px;
+}
+
+h1 {
+  margin: 2px 0 8px;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.icon-button {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  color: var(--accent);
+  background: var(--soft);
+  border-radius: 8px;
+  transition: var(--theme-fade), transform 0.25s var(--ease);
+}
+
+.icon-button:hover {
+  background: var(--soft-deep);
+}
+
+.icon-button:active {
+  transform: scale(0.94);
+}
+
+.panel {
+  padding: 14px 14px 12px;
+  animation: rise 0.5s var(--ease) backwards;
+}
+
+.home .panel + .panel { animation-delay: 80ms; }
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.chart {
+  --tick: 18px;
+  gap: 5px;
+  height: 108px;
+}
+
+.chart .fill {
+  border-radius: 4px 4px 2px 2px;
+}
+
+.chart .tick {
+  font-size: 10px;
+}
+
+.sites {
+  display: grid;
+  gap: 2px;
+  list-style: none;
+}
+
+.site {
+  display: grid;
+  grid-template-columns: 16px 1fr auto;
+  align-items: center;
+  column-gap: 10px;
+  row-gap: 6px;
+  padding: 6px 2px;
+  animation: rise 0.45s var(--ease) backwards;
+}
+
+[data-icons='off'] .site {
+  grid-template-columns: 1fr auto;
+}
+
+.domain {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.time {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.track {
+  grid-column: -3 / -1;
+  height: 4px;
+  overflow: hidden;
+  background: var(--soft);
+  border-radius: 2px;
+  transition: var(--theme-fade);
+}
+
+.bar {
+  height: 100%;
+  background: var(--accent-soft);
+  border-radius: inherit;
+  transform-origin: left;
+  transition: transform 0.6s var(--ease), background-color 0.35s;
+}
+
+.site:first-child .bar {
+  background: var(--accent);
+}
+
+.empty {
+  padding: 10px 0 6px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.settings-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 0 2px;
+}
+
+.setting {
+  display: grid;
+  gap: 4px;
+}
+
+.setting .seg {
+  margin-top: 6px;
+}
+
+.name {
+  display: block;
+  font-weight: 700;
+}
+
+.hint {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.options {
+  display: grid;
+  gap: 10px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.option .seg {
+  width: 150px;
+}
+
+.switch {
+  position: relative;
+  flex: none;
+  width: 36px;
+  height: 22px;
+  background: var(--soft-deep);
+  border-radius: 99px;
+  cursor: pointer;
+  transition: background-color 0.25s;
+  appearance: none;
+}
+
+.switch::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  background: var(--surface);
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 15%);
+  transition: transform 0.3s var(--ease);
+}
+
+.switch:checked {
+  background: var(--accent);
+}
+
+.switch:checked::before {
+  transform: translateX(14px);
+}
+
+.switch:focus-visible {
+  outline: 2px solid var(--accent-soft);
+  outline-offset: 2px;
+}
+
+.links {
+  padding-block: 2px;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 0;
+  text-align: left;
+  color: var(--ink);
+}
+
+.link + .link {
+  border-top: 1px solid var(--line);
+  transition: var(--theme-fade);
+}
+
+.mark {
+  color: var(--accent);
+  transition: transform 0.3s var(--ease);
+}
+
+.link:hover svg.mark {
+  transform: translate(2px, -2px);
+}
+
+.star {
+  width: 16px;
+  font-size: 18px;
+  line-height: 1;
+  text-align: center;
+}
+
+.link:hover .star {
+  transform: rotate(45deg) scale(1.15);
+}
